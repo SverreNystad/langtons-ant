@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langtons_ant</title>
+</head>
+<style>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<body>
+    <canvas id="my_canvas" style="border: 2px solid black"></canvas>
+    <script>
+        var canvas_el = document.querySelector('#my_canvas')
+        canvas_el.width = window.innerWidth
+        canvas_el.height = window.innerHeight
+        var ctx = canvas_el.getContext("2d");
+
+        var x = 0100;
+        var y = 0100;
+
+
+        var direction = "up";
+        var direction_list = ["up", "right", "down", "left"]
+
+
+        // var color = "white";
+        var box_width = 5;
+
+        var cell_list = [];
+        //Lager et rutenettet med fargeb , Med eventlisteners og ider
+        for (var r = 1; r <= canvas_el.height; r++) {
+            for (var c = 1; c <= canvas_el.width; c++) {
+                var cell = num_converter(r) + ", " + num_converter(c) + ", " + "white";
+                cell_list.push(cell)
+            }
+        }
+        console.log(cell_list);
+
+        setInterval(update, u_pr_s(1000));
+
+        // FUNCTIONS
+        function update() {
+            var ant_pos = num_converter(x) + ", " + num_converter(y);
+            // console.log(ant_pos);
+            if (cell_list.indexOf(ant_pos + ", " + "white") != -1) {
+                var ant_cell_pos = cell_list.indexOf(ant_pos + ", " + "white");
+                var color = "white";
+            }
+            else {
+                var ant_cell_pos = cell_list.indexOf(ant_pos + ", " + "black");
+                var color = "black";
+            }
+            // var ant_cell_pos = cell_list.indexOf(ant_pos);
+            console.log(ant_cell_pos);
+            console.log(color);
+
+
+            // MÅTER Å FINNE FARGEN
+            // ant_cell_pos.endsWith("white") ? color = "white" : color = "black";
+            // cell_list.match(/ant_pos/g);
+            // var color = cell_list[ant_cell_pos].slice(ant_cell_pos.length, end)
+            // console.log(cell_list.search(ant_pos));
+
+            check_color(color);
+            move_udrl(direction, box_width);
+            change_color(color, ant_cell_pos, ant_pos)
+            draw_rec(num_converter(x), num_converter(y), box_width, color)
+
+            // console.log(ant_pos);
+        }
+
+        function check_color(color) {
+            color == "white" ? turn_right() : turn_left();
+        }
+
+        function turn_right() {
+            var num = direction_list.indexOf(direction) + 1;
+            if (num >= direction_list.length) num = 0;
+            direction = direction_list[num];
+        }
+
+        function turn_left() {
+            var num = direction_list.indexOf(direction) - 1;
+            if (num < 0) num = direction_list.length - 1;
+            direction = direction_list[num];
+        }
+
+        function move_udrl(direction, box_width) {
+            if (direction == "up") y += box_width;
+            if (direction == "down") y -= box_width;
+            if (direction == "right") x += box_width;
+            if (direction == "left") x -= box_width;
+        }
+
+        function change_color(color, ant_cell_pos, ant_pos) {
+            if (color == "white") cell_list[ant_cell_pos] = ant_pos + ", " + "black";
+            else if (color == "black") cell_list[ant_cell_pos] = ant_pos + ", " + "white";
+            // console.log(color);
+        }
+
+        function u_pr_s(time) {
+            return ((1 * 1000) / time)
+            // Antall ganger den skal aktiveres i sekundet
+        }
+
+        function num_converter(input_number) {
+            let number = "" + Number(input_number);
+            let padding = "0000";
+            return padding.substring(0, padding.length - number.length) + number;
+        }
+
+        // function board(rows,cells){
+        //     var cell_list = [];
+        //     for (var r = 1; r <= rows; r++) {
+        //         for (var c = 1; c <= cells; c++) {
+        //             var cell = num_converter(r) + ", " + num_converter(c) + ", " + "white" ;
+        //             cell_list.push(cell)
+        //         }
+        //     }
+        //     return cell_list;
+        // }
+
+
+        // NOTES
+
+        function draw_rec(x, y, size, color) {
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, size, size);
+        }
+        /*
+        Turn_right works
+        Turn_left  works
+        u_pr_s     works
+
+        */
+
+    </script>
+
+</body>
